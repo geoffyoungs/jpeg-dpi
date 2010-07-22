@@ -93,13 +93,14 @@ else
 end
 
 if $mmap
+	len = [File.size(source),256].min
 	if write_dpi
 		FileUtils.cp(source, target) unless target == source
-		mmap = Mmap.new(target, "a", "offset" => 0, 'length' => 256)
+		mmap = Mmap.new(target, "a", "offset" => 0, 'length' => len)
 	else
-		mmap = Mmap.new(source, 'r', 'offset' => 0, 'length' => 256)
+		mmap = Mmap.new(source, 'r', 'offset' => 0, 'length' => len)
 	end
-	data = mmap[0..255]
+	data = mmap[0...len]
 	puts "Modify in-place" if $DEBUG
 else
 	data = File.open(source) { |fp| 
